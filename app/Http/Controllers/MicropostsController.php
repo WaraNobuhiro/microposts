@@ -11,7 +11,7 @@ class MicropostsController extends Controller
         $data = [];
         if (\Auth::check()) {
             $user = \Auth::user();
-            $microposts = $user->microposts()->orderBy('created_at', 'desc')->paginate(10);
+            $microposts = $user->feed_microposts()->orderBy('created_at', 'desc')->paginate(10);
 
             $data = [
                 'user' => $user,
@@ -45,5 +45,20 @@ class MicropostsController extends Controller
         }
 
         return redirect()->back();
+    }
+    
+    public function favorite($id)
+    {
+        $user = User::find($id);
+        $favor = $user->favorite()->paginate(10);
+
+        $data = [
+            'user' => $user,
+            'microposts' => $favorite,
+        ];
+
+        $data += $this->counts($user);
+
+        return view('microposts.favorite', $data);
     }
 }

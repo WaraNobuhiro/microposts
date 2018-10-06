@@ -56,29 +56,30 @@ class User extends Authenticatable
     }
     }
     public function unfollow($userId)
-{
+    {
     // 既にフォローしているかの確認
-    $exist = $this->is_following($userId);
+        $exist = $this->is_following($userId);
     // 自分自身ではないかの確認
-    $its_me = $this->id == $userId;
+        $its_me = $this->id == $userId;
 
-    if ($exist && !$its_me) {
+        if ($exist && !$its_me) {
         // 既にフォローしていればフォローを外す
-        $this->followings()->detach($userId);
-        return true;
-    } else {
+            $this->followings()->detach($userId);
+            return true;
+        } else {
         // 未フォローであれば何もしない
-        return false;
+            return false;
+        }
     }
-}
 
-public function is_following($userId) {
-    return $this->followings()->where('follow_id', $userId)->exists();
-}
+    public function is_following($userId) {
+        return $this->followings()->where('follow_id', $userId)->exists();
+    }
      public function feed_microposts()
     {
         $follow_user_ids = $this->followings()-> pluck('users.id')->toArray();
         $follow_user_ids[] = $this->id;
         return Micropost::whereIn('user_id', $follow_user_ids);
     }
-}
+
+}    
